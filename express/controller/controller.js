@@ -24,5 +24,18 @@ module.exports = {
         let path = config('base') + req.query.path
         let info = nfs.getDir(path)
         res.send(rs(info))
+    },
+    getFile(req, res) {
+        res.set({'Content-Type': 'application/octet-stream'})
+        let base = config('base')
+        fs.createReadStream(base + '/' + req.query.file).pipe(res)
+    },
+    setBase(req, res) {
+        let base = req.body.base
+        if(base.endsWith('/')) {
+            base = base.substr(0, base.length - 1)
+        }
+        config('base', base)
+        res.send(rs())
     }
 }

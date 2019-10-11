@@ -7,10 +7,12 @@ let getRule = {
     test: 'test',
     config: 'getConfig',
     pathinfo: 'pathinfo',
+    file: 'getFile',
 }
 let postRule = {
     handle: 'handle',
     config: 'setConfig',
+    setBase: 'setBase',
 }
 
 
