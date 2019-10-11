@@ -5,10 +5,15 @@ let controller = require('./controller/controller')
 let getRule = {
     '': 'index',
     test: 'test',
+    config: 'getConfig',
+    pathinfo: 'pathinfo',
 }
 let postRule = {
     handle: 'handle',
+    config: 'setConfig',
 }
+
+
 for (path in getRule) {
     router.get('/' + path, controller[getRule[path]])
 }
