@@ -1,0 +1,30 @@
+{
+  "id": "1454666",
+  "name": "viewer",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "4766846",
+      "name": "folder",
+      "font_class": "folder",
+      "unicode": "e7d1",
+      "unicode_decimal": 59345
+    },
+    {
+      "icon_id": "4766905",
+      "name": "video",
+      "font_class": "video",
+      "unicode": "e7da",
+      "unicode_decimal": 59354
+    },
+    {
+      "icon_id": "4766907",
+      "name": "sound",
+      "font_class": "sound",
+      "unicode": "e7db",
+      "unicode_decimal": 59355
+    }
+  ]
+}

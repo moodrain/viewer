@@ -2,20 +2,11 @@ let {rs, config, nfs} = require('../util/util')
 let fs = require('fs')
 
 module.exports = {
-    index(req, res) {
-        res.send('index')
-    },
-    test(req, res) {
-        res.send(config('base'))
-    },
-    handle(req, res) {
-        res.send(rs(req.body))
-    },
     getConfig(req, res) {
         res.send(rs(config()))
     },
     setConfig(req, res) {
-        for(key in req.body) {
+        for(let key in req.body) {
             config(key, req.body[key])
         }
         res.send(rs())
@@ -26,9 +17,10 @@ module.exports = {
         res.send(rs(info))
     },
     getFile(req, res) {
-        res.set({'Content-Type': 'application/octet-stream'})
+        let contentType = req.query.content_type ? req.query.content_type : 'application/octet-stream'
         let base = config('base')
-        fs.createReadStream(base + '/' + req.query.file).pipe(res)
+        res.set({'Content-Type': contentType})
+        fs.createReadStream(base + req.query.file).pipe(res)
     },
     setBase(req, res) {
         let base = req.body.base

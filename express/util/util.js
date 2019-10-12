@@ -45,6 +45,7 @@ let getKind = file => {
 
 let nfs = {
     getDir(path) {
+        let base = config('base')
         if(path.endsWith('/')) {
             path = path.substr(0, path.length - 1)
         }
@@ -70,10 +71,12 @@ let nfs = {
                     toChild.path = childPath
                     toChild.type = fs.statSync(childPath).isDirectory() ? 'dir' : 'file'
                     toChild.kind = toChild.type == 'dir' ? 'directory' : getKind(toChild.name)
+                    toChild.path = toChild.path.replace(base, '')
                     toChildren.push(toChild)
                 })
                 toItem.children = toChildren
             }
+            toItem.path = toItem.path.replace(base, '')
             toReturn.push(toItem)
         })
         return toReturn
