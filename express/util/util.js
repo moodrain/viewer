@@ -50,16 +50,27 @@ let nfs = {
             path = path.substr(0, path.length - 1)
         }
         let toReturn  = []
-        if(! fs.existsSync(path) || ! fs.statSync(path).isDirectory()) {
+        try {
+            if(! fs.existsSync(path) || ! fs.statSync(path).isDirectory()) {
+                return []
+            }
+        } catch (e) {
             return []
         }
-        let items = fs.readdirSync(path)
+        let items = []
+        if(path.endsWith(':')) {
+            items = fs.readdirSync(path + '/')
+        } else {
+            items = fs.readdirSync(path)
+        }
         items.forEach(item => {
             let toItem = {}
             let itemPath = path + '/' + item
             toItem.name = item
             toItem.path = itemPath
-            toItem.type = fs.statSync(itemPath).isDirectory() ? 'dir' : 'file'
+            try {
+                toItem.type = fs.statSync(itemPath).isDirectory() ? 'dir' : 'file'
+            } catch (e) {}
             toItem.kind = toItem.type == 'dir' ? 'directory' : getKind(toItem.name)
             if(toItem.type == 'dir') {
                 let children = fs.readdirSync(itemPath)

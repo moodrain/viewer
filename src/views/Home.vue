@@ -14,7 +14,7 @@
         <hr style="margin: 2px;border-top: 0.1px solid lightgray;"/>
 
         <div class="dir-box">
-            <mt-button class="dir-item" v-for="(dir, index) in directories" :key="index" size="small" :type="index == dirIndex ? 'primary' : 'default'" @click="dirIndex = index">{{ dir.name }}</mt-button>
+            <mt-button class="dir-item" v-for="(dir, index) in directories" :key="index" size="small" :type="dirStyle[index] ? dirStyle[index] : 'default'" @click="openDir(index)">{{ dir.name }}</mt-button>
         </div>
 
         <div id="childBox" class="child-box">
@@ -35,12 +35,13 @@
     export default {
         data() {
             return {
-                title: '/',
+                title: '',
                 base: '',
                 path: '/',
                 dirIndex: 0,
                 files: [],
                 showMenu: false,
+                dirStyle: [],
                 menu: [{
                         name: '设置根目录',
                         method: () => {
@@ -56,11 +57,28 @@
             if(this.$route.query.path) {
                 this.path = this.$route.query.path
             }
+            if(this.$route.query.dir) {
+                this.title = this.$route.query.dir
+            }
             this.$http.get('config').then(rs => {
                 this.base = rs.data.data.base
                 this.$http.get('pathinfo?path=' + this.path).then(rs => {
                     this.files = rs.data.data
-                    this.title = this.pathArr[this.pathArr.length - 1]
+                    if(! this.title) {
+                        this.title = this.pathArr[this.pathArr.length - 1]
+                    }
+                    if(this.$route.query.dir) {
+                        this.directories.some((d, index) => {
+                            if(d.name == this.$route.query.dir) {
+                                this.dirIndex = index
+                                this.dirStyle[index] = 'primary'
+                                return true
+                            }
+                        })
+                    }
+                    if(this.dirStyle.length == 0) {
+                        this.dirStyle[0] = 'primary'
+                    }
                 })
             })
         },
@@ -84,6 +102,9 @@
                     }
                 }
                 window.location = '?path=' + path
+            },
+            openDir(index) {
+                window.location.href = '?path=' + this.path + '&dir=' + this.directories[index].name
             }
         },
         computed: {
@@ -122,6 +143,7 @@
                             switch(child.kind) {
                                 case 'audio': child.className = 'iconfont icon-sound';break
                                 case 'video': child.className = 'iconfont icon-video';break
+                                default     : child.className = 'iconfont icon-file'
                             }
                         }
                     }
