@@ -2,7 +2,6 @@ let {rs, config, nfs} = require('../util/util')
 let fs = require('fs')
 const sharp = require('sharp')
 
-
 let base = config('base')
 
 module.exports = {
@@ -28,7 +27,7 @@ module.exports = {
     getThumb(req, res) {
         let contentType = req.query.content_type ? req.query.content_type : 'application/octet-stream'
         res.set({'Content-Type': contentType})
-        let width = req.query.width ? req.query.width : 180
+        let width = req.query.width ? req.query.width : 170
         sharp(base + req.query.file).resize(width).pipe(res)
     },
     setBase(req, res) {

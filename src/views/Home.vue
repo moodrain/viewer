@@ -164,13 +164,14 @@
         flex-wrap: wrap;
     }
     .child-item img {
-        width: 180px;
+        width: 170px;
+        margin: 5px;
     }
     .child-item i {
-        width: 180px;
-        height: 180px;
+        width: 170px;
+        height: 170px;
         display: block;
-        line-height: 180px;
+        line-height: 170px;
         font-size: 45px;
         text-align: center;
     }
@@ -183,8 +184,8 @@
         margin: 2px;
     }
     image[lazy=loading] {
-        width: 180px;
-        height: 180px;
+        width: 170px;
+        height: 170px;
         margin: auto;
     }
 </style>
