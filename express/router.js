@@ -6,6 +6,7 @@ let getRule = {
     config: 'getConfig',
     pathinfo: 'pathinfo',
     file: 'getFile',
+    thumb: 'getThumb',
 }
 let postRule = {
     config: 'setConfig',

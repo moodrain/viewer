@@ -17,14 +17,13 @@
             <mt-button class="dir-item" v-for="(dir, index) in directories" :key="index" size="small" :type="index == dirIndex ? 'primary' : 'default'" @click="dirIndex = index">{{ dir.name }}</mt-button>
         </div>
 
-        <div class="child-box">
+        <div id="childBox" class="child-box">
             <div class="child-item" v-for="(child, index) in children" :key="index" @click="openChild(child)">
-                <img v-if="child.kind == 'image'" :src="child.imgSrc" />
+                <img v-lazy.childBox="child.imgSrc" v-if="child.kind == 'image'" :src="child.imgSrc" />
                 <i v-if="child.kind != 'image'" :class="child.className"></i>
                 <p>{{ child.name }}</p>
             </div>
         </div>
-
 
         <mt-actionsheet :actions="menu" v-model="showMenu"></mt-actionsheet>
 
@@ -115,7 +114,7 @@
                 toChildren = toChildren.concat(children.filter(child => child.type == 'file'))
                 toChildren.forEach(child => {
                     if(child.kind == 'image') {
-                        child.imgSrc = 'api/file?file=' + child.path + '&content_type=' + util.getMime(child.name)
+                        child.imgSrc = 'api/thumb?file=' + child.path + '&content_type=' + util.getMime(child.name)
                     } else {
                         if(child.type == 'dir') {
                             child.className = 'iconfont icon-folder'
@@ -160,5 +159,10 @@
     }
     .dir-item {
         margin: 2px;
+    }
+    image[lazy=loading] {
+        width: 180px;
+        height: 180px;
+        margin: auto;
     }
 </style>
