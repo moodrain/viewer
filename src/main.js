@@ -4,6 +4,7 @@ import 'mint-ui/lib/style.css'
 import App from './App.vue'
 import router from './router'
 import '../public/icon/iconfont.css'
+import 'dplayer/dist/DPlayer.min.css';
 
 const axios = require('axios')
 axios.defaults.baseURL = '/api/'

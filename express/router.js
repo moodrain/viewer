@@ -5,8 +5,9 @@ let controller = require('./controller/controller')
 let getRule = {
     config: 'getConfig',
     pathinfo: 'pathinfo',
-    file: 'getFile',
-    thumb: 'getThumb',
+    'file/*': 'getFile',
+    'thumb/*': 'getThumb',
+    'video/*': 'getVideo',
 }
 let postRule = {
     config: 'setConfig',

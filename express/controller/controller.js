@@ -22,13 +22,35 @@ module.exports = {
     getFile(req, res) {
         let contentType = req.query.content_type ? req.query.content_type : 'application/octet-stream'
         res.set({'Content-Type': contentType})
-        fs.createReadStream(base + req.query.file).pipe(res)
+        fs.createReadStream(base + '/' + req.params[0]).pipe(res)
     },
     getThumb(req, res) {
         let contentType = req.query.content_type ? req.query.content_type : 'application/octet-stream'
         res.set({'Content-Type': contentType})
-        let width = req.query.width ? req.query.width : 170
-        sharp(base + req.query.file).resize(width).pipe(res)
+        let width = req.query.width ? Number.parseInt(req.query.width) : 170
+        sharp(base + '/' + req.params[0]).resize(width).pipe(res)
+    },
+    getVideo(req, res) {
+        let file = base + '/' + req.params[0]
+        let size = fs.statSync(file).size
+        let contentType = req.query.content_type ? req.query.content_type : 'application/octet-stream'
+        let start = Number.parseInt(req.header('Range').split('=')[1].split('-')[0])
+        let length = 2 * 1024 * 1024
+        let contentLength = length
+        if(start + length > size) {
+            contentLength = size - start
+        }
+        res.set({
+            'Content-Type': contentType,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': contentLength,
+            'Content-Range': `bytes ${start}-${start + contentLength - 1}/${size}`,
+        })
+        res.status(206)
+        fs.createReadStream(file, {
+            start: start,
+            end: start + contentLength - 1,
+        }).pipe(res)
     },
     setBase(req, res) {
         let base = req.body.base

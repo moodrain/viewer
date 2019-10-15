@@ -7,7 +7,8 @@
 
         <div class="path-bar">
             <span v-for="(path, index) in pathArr" :key="index">
-                <a href="javascript:" @click="openPath(index)">{{ path }}</a><span v-show="index !== pathArr.length - 1"> > </span>
+                <a v-if="index != pathArr.length - 1" href="javascript:" @click="openPath(index)">{{ path }}</a><span v-show="index !== pathArr.length - 1"> > </span>
+                <span v-if="index == pathArr.length - 1">{{ path }}</span>
             </span>
         </div>
 
@@ -18,7 +19,7 @@
         </div>
 
         <div id="childBox" class="child-box">
-            <div class="child-item" v-for="(child, index) in children" :key="index" @click="openChild(child)">
+            <div class="child-item" v-for="(child, index) in children" :key="index" @click="openChild(child, index)">
                 <img v-lazy.childBox="child.imgSrc" v-if="child.kind == 'image'" :src="child.imgSrc" />
                 <i v-if="child.kind != 'image'" :class="child.className"></i>
                 <p>{{ child.name }}</p>
@@ -47,7 +48,10 @@
                         method: () => {
                             let base = window.prompt('根目录', this.base)
                             if(base) {
-                                this.$http.post('setBase', {base}).then(() => { window.location = '/' })
+                                this.$http.post('setBase', {base}).then(() => {
+                                    window.location = ''
+                                    window.location.reload()
+                                })
                             }
                         }
                 }]
@@ -86,12 +90,44 @@
             toMenu() {
                 this.showMenu = ! this.showMenu
             },
-            openChild(child) {
+            openChild(child, index) {
                 if(child.type == 'dir') {
-                    window.location = '?path=' + child.path
+                    this.path = child.path
+                    this.dirIndex = 0
+                    this.$router.push({
+                        name: 'home',
+                        query: {
+                            path: child.path
+                        }
+                    })
+                    this.$http.get('pathinfo?path=' + child.path).then(rs => {
+                        this.files = rs.data.data
+                        if(! this.title) {
+                            this.title = this.pathArr[this.pathArr.length - 1]
+                        }
+                    })
                     return
                 }
-                window.open('api/file?file=' + child.path + '&content_type=' + util.getMime(child.name), '_blank')
+                if(child.kind == 'image') {
+                    let {href} = this.$router.resolve({
+                        name: 'gallery',
+                        query: {
+                            path: this.directory.path,
+                            index
+                        }
+                    })
+                    window.open(href, '_blank')
+                    return;
+                }
+                if(child.kind == 'video') {
+                    let {href} = this.$router.resolve({
+                        name: 'player',
+                        query: {path: child.path}
+                    })
+                    window.open(href, '_blank')
+                    return;
+                }
+                window.open('api/file' + child.path + '?content_type=' + util.getMime(child.name), '_blank')
             },
             openPath(index) {
                 let path = ''
@@ -101,10 +137,29 @@
                         path += '/'
                     }
                 }
-                window.location = '?path=' + path
+                this.$router.push({
+                    name: 'home',
+                    query: {path}
+                })
+                this.path = path
+                this.dirIndex = 0
+                this.$http.get('pathinfo?path=' + path).then(rs => {
+                    this.files = rs.data.data
+                    if(! this.title) {
+                        this.title = this.pathArr[this.pathArr.length - 1]
+                    }
+                })
             },
             openDir(index) {
-                window.location.href = '?path=' + this.path + '&dir=' + this.directories[index].name
+                this.dirIndex = index
+                this.dirStyle = {[this.dirIndex]: 'primary'}
+                this.$router.push({
+                    name: 'home',
+                    query: {
+                        path: this.path,
+                        dir: this.directories[index].name,
+                    }
+                })
             }
         },
         computed: {
@@ -120,6 +175,7 @@
                 let directories = this.files.filter(file => file.type === 'dir')
                 directories.unshift({
                     name: '/',
+                    path: this.path,
                     type: 'dir',
                     children: this.rootFiles
                 })
@@ -135,7 +191,7 @@
                 toChildren = toChildren.concat(children.filter(child => child.type == 'file'))
                 toChildren.forEach(child => {
                     if(child.kind == 'image') {
-                        child.imgSrc = 'api/thumb?file=' + child.path + '&content_type=' + util.getMime(child.name)
+                        child.imgSrc = 'api/thumb/' + child.path + '?content_type=' + util.getMime(child.name)
                     } else {
                         if(child.type == 'dir') {
                             child.className = 'iconfont icon-folder'
@@ -154,7 +210,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .path-bar {
         margin: 3px 0 0 8px;
         font-size: 18px;
