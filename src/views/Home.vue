@@ -94,6 +94,7 @@
                 if(child.type == 'dir') {
                     this.path = child.path
                     this.dirIndex = 0
+                    this.dirStyle = {[this.dirIndex]: 'primary'}
                     this.$router.push({
                         name: 'home',
                         query: {
@@ -143,6 +144,7 @@
                 })
                 this.path = path
                 this.dirIndex = 0
+                this.dirStyle = {[this.dirIndex]: 'primary'}
                 this.$http.get('pathinfo?path=' + path).then(rs => {
                     this.files = rs.data.data
                     if(! this.title) {
@@ -234,7 +236,12 @@
     .child-item p {
         width: 180px;
         text-align: center;
-        overflow-x: scroll;
+        overflow-x: hidden;
+    }
+    @media (max-width: 600px) {
+        .child-item p {
+            overflow-x: scroll;
+        }
     }
     .dir-item {
         margin: 2px;

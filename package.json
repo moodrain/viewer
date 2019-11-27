@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "vue-cli-service build && nodemon ./express/www",
+    "start": "vue-cli-service build && node ./express/www",
     "build": "vue-cli-service build",
     "watch": "vue-cli-service serve"
   },

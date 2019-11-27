@@ -3,8 +3,8 @@
 
         <mt-header :title="title"></mt-header>
 
-        <div class="gallery-box">
-            <img @click="open" v-for="(image, index) in images" :src="image.imgSrc" v-show="index == imgIndex">
+        <div id="galleryBox" class="gallery-box">
+            <img  v-lazy.galleryBox="image.imgSrc" @click="open" v-for="(image, index) in images" :src="image.imgSrc" v-show="index == imgIndex">
         </div>
 
         <div class="button-box">
@@ -53,9 +53,11 @@ export default {
         images() {
             let images = []
             this.files.forEach(file => {
-                let image = Object.assign({}, file)
-                image.imgSrc = 'api/thumb/' + image.path + '?content_type=' + util.getMime(image.name)
-                images.push(image)
+                if(file.kind == 'image') {
+                    let image = Object.assign({}, file)
+                    image.imgSrc = 'api/thumb/' + image.path + '?content_type=' + util.getMime(image.name) + '&width=720'
+                    images.push(image)
+                }
             })
             return images
         },

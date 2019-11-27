@@ -28,7 +28,7 @@ module.exports = {
         let contentType = req.query.content_type ? req.query.content_type : 'application/octet-stream'
         res.set({'Content-Type': contentType})
         let width = req.query.width ? Number.parseInt(req.query.width) : 170
-        sharp(base + '/' + req.params[0]).resize(width).pipe(res)
+        sharp(base + '/' + req.params[0]).resize(width).toBuffer().then(data => res.send(data)).catch(() => res.send(''))
     },
     getVideo(req, res) {
         let file = base + '/' + req.params[0]
