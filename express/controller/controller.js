@@ -53,11 +53,12 @@ module.exports = {
         }).pipe(res)
     },
     setBase(req, res) {
-        let base = req.body.base
-        if(base.endsWith('/')) {
-            base = base.substr(0, base.length - 1)
+        let newBase = req.body.base
+        if(newBase.endsWith('/')) {
+            newBase = newBase.substr(0, base.length - 1)
         }
-        config('base', base)
+        config('base', newBase)
+        base = newBase
         res.send(rs())
     }
 }
